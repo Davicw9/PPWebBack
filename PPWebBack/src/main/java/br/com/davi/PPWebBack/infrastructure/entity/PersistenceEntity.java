@@ -1,4 +1,4 @@
-package br.com.davi.PPWebBack.infrastructureEntity;
+package br.com.davi.PPWebBack.infrastructure.entity;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

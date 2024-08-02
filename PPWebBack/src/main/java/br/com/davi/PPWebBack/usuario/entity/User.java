@@ -1,6 +1,6 @@
 package br.com.davi.PPWebBack.usuario.entity;
 
-import br.com.davi.PPWebBack.infrastructureEntity.PersistenceEntity;
+import br.com.davi.PPWebBack.infrastructure.entity.PersistenceEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

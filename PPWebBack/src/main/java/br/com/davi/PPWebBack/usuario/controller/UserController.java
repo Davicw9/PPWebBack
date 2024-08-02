@@ -1,5 +1,8 @@
 package br.com.davi.PPWebBack.usuario.controller;
 
+import br.com.davi.PPWebBack.infrastructure.mapper.ObjectMapperUtil;
+import br.com.davi.PPWebBack.usuario.dto.UserGetResponseDto;
+import br.com.davi.PPWebBack.usuario.dto.UserPostRequestDto;
 import br.com.davi.PPWebBack.usuario.entity.User;
 import br.com.davi.PPWebBack.usuario.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -11,18 +14,26 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(path = "/usuarios")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class UserController {
     private final UserService userService;
+    private final ObjectMapperUtil objectMapperUtil;
+
 
     @GetMapping(path = "/findall", produces = "application/json")
     public ResponseEntity<?> findAll(){
         return ResponseEntity.status(HttpStatus.OK)
-                .body(userService.findAll());
+                .body(objectMapperUtil.mapAll(
+                        this.userService.findAll(),
+                        UserGetResponseDto.class));
     }
 
     @PostMapping(path = "/save", consumes = "application/json")
-    public ResponseEntity<?> save(@RequestBody User user){
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(user));
+    public ResponseEntity<?> save(@RequestBody UserPostRequestDto userPostRequestDto){
+        return ResponseEntity.status(HttpStatus.CREATED).
+                body(objectMapperUtil.map(userService.save(
+                        objectMapperUtil.map(userPostRequestDto, User.class)
+                ), UserGetResponseDto.class));
     }
 
     @DeleteMapping(path = "/delete/{id}", produces = "application/json")
