@@ -27,6 +27,11 @@ public class UserController {
                         this.userService.findAll(),
                         UserGetResponseDto.class));
     }
+    /*@GetMapping(path = "/findallTeste", produces = "application/json")
+    public ResponseEntity<?> findAllTeste(){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(this.userService.findAll());
+    }*/
 
     @PostMapping(path = "/save", consumes = "application/json")
     public ResponseEntity<?> save(@RequestBody UserPostRequestDto userPostRequestDto){
@@ -41,9 +46,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(userService.delete(id));
     }
 
-    @PutMapping(path = "/update", produces = "application/json")
-    public ResponseEntity<?> update(@RequestBody User user){
-        userService.update(user);
+    @PutMapping(path = "/update/{id}", produces = "application/json")
+    public ResponseEntity<?> update(@PathVariable("id") Long id, @RequestBody User user){
+        userService.update(id, user);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

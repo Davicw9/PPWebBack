@@ -11,7 +11,7 @@ public interface UserIService {
 
     String delete(Long id);
 
-    User update(User user);
+    User update(Long id, User user);
 
     List<User> findAll();
 }
