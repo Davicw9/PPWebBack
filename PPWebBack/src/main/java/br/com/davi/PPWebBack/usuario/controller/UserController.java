@@ -6,6 +6,7 @@ import br.com.davi.PPWebBack.usuario.dto.UserPostRequestDto;
 import br.com.davi.PPWebBack.usuario.entity.User;
 import br.com.davi.PPWebBack.usuario.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +22,23 @@ public class UserController {
 
 
     @GetMapping(path = "/findall", produces = "application/json")
+    public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0") int page,
+                                     @RequestParam(defaultValue = "10") int size) {
+        Page<User> userPage = userService.findAll(page, size);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(objectMapperUtil.mapAll(userPage.getContent(), UserGetResponseDto.class));
+    }
+
+    /*@GetMapping(path = "/findall", produces = "application/json")
     public ResponseEntity<?> findAll(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(objectMapperUtil.mapAll(
                         this.userService.findAll(),
                         UserGetResponseDto.class));
-    }
+    }*/
+
+    //--------------------------------------------------------------------
+
     /*@GetMapping(path = "/findallTeste", produces = "application/json")
     public ResponseEntity<?> findAllTeste(){
         return ResponseEntity.status(HttpStatus.OK)
