@@ -25,42 +25,49 @@ public class UserController {
     public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0") int page,
                                      @RequestParam(defaultValue = "10") int size) {
         Page<User> userPage = userService.findAll(page, size);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(objectMapperUtil.mapAll(userPage.getContent(), UserGetResponseDto.class));
+        Page<UserGetResponseDto> userGetResponseDto = userPage.map(user -> objectMapperUtil.map(user, UserGetResponseDto.class));
+
+        return ResponseEntity.status(HttpStatus.OK).body(userGetResponseDto);
     }
 
-    /*@GetMapping(path = "/findall", produces = "application/json")
-    public ResponseEntity<?> findAll(){
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(objectMapperUtil.mapAll(
-                        this.userService.findAll(),
-                        UserGetResponseDto.class));
-    }*/
-
-    //--------------------------------------------------------------------
-
-    /*@GetMapping(path = "/findallTeste", produces = "application/json")
-    public ResponseEntity<?> findAllTeste(){
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(this.userService.findAll());
-    }*/
 
     @PostMapping(path = "/save", consumes = "application/json")
-    public ResponseEntity<?> save(@RequestBody UserPostRequestDto userPostRequestDto){
-        return ResponseEntity.status(HttpStatus.CREATED).
-                body(objectMapperUtil.map(userService.save(
-                        objectMapperUtil.map(userPostRequestDto, User.class)
-                ), UserGetResponseDto.class));
+    public ResponseEntity<UserGetResponseDto> save(@RequestBody UserPostRequestDto userPostRequestDto){
+        User user = objectMapperUtil.map(userPostRequestDto, User.class);
+        User savedUser = userService.save(user);
+        UserGetResponseDto responseDto = objectMapperUtil.map(savedUser, UserGetResponseDto.class);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     @DeleteMapping(path = "/delete/{id}", produces = "application/json")
     public ResponseEntity<?> delete(@PathVariable("id") Long id){
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(userService.delete(id));
+
+        userService.delete(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PutMapping(path = "/update/{id}", produces = "application/json")
-    public ResponseEntity<?> update(@PathVariable("id") Long id, @RequestBody User user){
-        userService.update(id, user);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @PatchMapping("/update/name/{id}")
+    public ResponseEntity<Void> updateName(@PathVariable Long id, @RequestParam String name) {
+        userService.updateName(id, name);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/update/email/{id}")
+    public ResponseEntity<Void> updateEmail(@PathVariable Long id, @RequestParam String email) {
+        userService.updateEmail(id, email);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/update/login/{id}")
+    public ResponseEntity<Void> updateLogin(@PathVariable Long id, @RequestParam String login) {
+        userService.updateLogin(id, login);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/update/password/{id}")
+    public ResponseEntity<Void> updatePassword(@PathVariable Long id, @RequestParam String password) {
+        userService.updatePassword(id, password);
+        return ResponseEntity.noContent().build();
     }
 }
