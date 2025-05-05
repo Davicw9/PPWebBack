@@ -2,10 +2,6 @@ package br.com.davi.PPWebBack.usuario.service;
 
 import br.com.davi.PPWebBack.usuario.entity.User;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 
 public interface UserIService {

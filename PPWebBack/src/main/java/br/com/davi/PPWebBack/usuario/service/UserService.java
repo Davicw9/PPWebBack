@@ -2,7 +2,6 @@ package br.com.davi.PPWebBack.usuario.service;
 
 import br.com.davi.PPWebBack.usuario.entity.User;
 import br.com.davi.PPWebBack.usuario.exception.EntityNotFoundException;
-import br.com.davi.PPWebBack.usuario.exception.InvalidRegistrationInformationException;
 import br.com.davi.PPWebBack.usuario.exception.UserAlreadyExistsException;
 import br.com.davi.PPWebBack.usuario.repository.UserIRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +27,7 @@ public class UserService implements UserIService {
         log.info("Salvando usuário com login: {}", user.getLogin());
         Optional <User> userOptionalLogin = userIRepository.findByLogin(user.getLogin());
         Optional <User> userOptionalEmail = userIRepository.findByEmail(user.getEmail());
+
         if (userOptionalLogin.isPresent()) {
             throw new UserAlreadyExistsException("Login já cadastrado");
         }
@@ -43,7 +43,7 @@ public class UserService implements UserIService {
         log.info("Deletando usuário com id: {}", id);
 
         if (!userIRepository.existsById(id)) {
-            throw new EntityNotFoundException(String.format("Usuário id=%s não existe", id));
+            throw new EntityNotFoundException("Usuário " + id + " não existe");
         }
         userIRepository.deleteById(id);
     }
@@ -54,12 +54,8 @@ public class UserService implements UserIService {
         log.info("Atualizando nome do usuário com id: {}", id);
 
         User user = userIRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Usuário id=%s não existe", id))
+                () -> new EntityNotFoundException("Usuário " + id + " não existe")
         );
-
-        if (name == null || name.isBlank()) {
-            throw new InvalidRegistrationInformationException("O nome não pode ser vazio");
-        }
 
         user.setName(name);
         userIRepository.save(user);
@@ -71,12 +67,8 @@ public class UserService implements UserIService {
         log.info("Atualizando email do usuário com id: {}", id);
 
         User user = userIRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Usuário id=%s não existe", id))
+                () -> new EntityNotFoundException("Usuário " + id +" não existe")
         );
-
-        if (email == null || email.isBlank()) {
-            throw new InvalidRegistrationInformationException("O email não pode ser vazio");
-        }
 
         // Verifica se o novo email já existe (exceto para o próprio usuário)
         Optional<User> userWithSameEmail = userIRepository.findByEmail(email);
@@ -94,12 +86,8 @@ public class UserService implements UserIService {
         log.info("Atualizando login do usuário com id: {}", id);
 
         User user = userIRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Usuário id=%s não existe", id))
+                () -> new EntityNotFoundException("Usuário " + id + " não existe")
         );
-
-        if (login == null || login.isBlank()) {
-            throw new InvalidRegistrationInformationException("O login não pode ser vazio");
-        }
 
         // Verifica se o novo login já existe (exceto para o próprio usuário)
         Optional<User> userWithSameLogin = userIRepository.findByLogin(login);
@@ -117,12 +105,8 @@ public class UserService implements UserIService {
         log.info("Atualizando senha do usuário com id: {}", id);
 
         User user = userIRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Usuário id=%s não existe", id))
+                () -> new EntityNotFoundException("Usuário " + id + " não existe")
         );
-
-        if (password == null || password.isBlank()) {
-            throw new InvalidRegistrationInformationException("A senha não pode ser vazia");
-        }
 
         user.setPassword(password);
         userIRepository.save(user);
