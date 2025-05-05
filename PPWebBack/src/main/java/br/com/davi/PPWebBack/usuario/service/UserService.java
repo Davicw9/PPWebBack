@@ -2,6 +2,7 @@ package br.com.davi.PPWebBack.usuario.service;
 
 import br.com.davi.PPWebBack.usuario.entity.User;
 import br.com.davi.PPWebBack.usuario.exception.EntityNotFoundException;
+import br.com.davi.PPWebBack.usuario.exception.InvalidRegistrationInformationException;
 import br.com.davi.PPWebBack.usuario.exception.UserAlreadyExistsException;
 import br.com.davi.PPWebBack.usuario.repository.UserIRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,11 @@ public class UserService implements UserIService {
 
 
     private final UserIRepository userIRepository;
+
+    private User getUserOrThrow(Long id) {
+        return userIRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário " + id + " não existe"));
+    }
 
     @Override
     @Transactional
@@ -53,9 +59,7 @@ public class UserService implements UserIService {
     public void updateName(Long id, String name) {
         log.info("Atualizando nome do usuário com id: {}", id);
 
-        User user = userIRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Usuário " + id + " não existe")
-        );
+        User user = getUserOrThrow(id);
 
         user.setName(name);
         userIRepository.save(user);
@@ -66,9 +70,7 @@ public class UserService implements UserIService {
     public void updateEmail(Long id, String email) {
         log.info("Atualizando email do usuário com id: {}", id);
 
-        User user = userIRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Usuário " + id +" não existe")
-        );
+        User user = getUserOrThrow(id);
 
         // Verifica se o novo email já existe (exceto para o próprio usuário)
         Optional<User> userWithSameEmail = userIRepository.findByEmail(email);
@@ -85,9 +87,7 @@ public class UserService implements UserIService {
     public void updateLogin(Long id, String login) {
         log.info("Atualizando login do usuário com id: {}", id);
 
-        User user = userIRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Usuário " + id + " não existe")
-        );
+        User user = getUserOrThrow(id);
 
         // Verifica se o novo login já existe (exceto para o próprio usuário)
         Optional<User> userWithSameLogin = userIRepository.findByLogin(login);
@@ -104,10 +104,11 @@ public class UserService implements UserIService {
     public void updatePassword(Long id, String password) {
         log.info("Atualizando senha do usuário com id: {}", id);
 
-        User user = userIRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Usuário " + id + " não existe")
-        );
+        User user = getUserOrThrow(id);
 
+        if (password == null || password.length() < 4) {
+            throw new InvalidRegistrationInformationException("Senha deve ter no mínimo 4 caracteres");
+        }
         user.setPassword(password);
         userIRepository.save(user);
     }
