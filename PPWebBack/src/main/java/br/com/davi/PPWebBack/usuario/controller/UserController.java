@@ -34,11 +34,20 @@ public class UserController {
     }
 
     @PostMapping(path = "/save", consumes = "application/json")
+    // Esse método é um endpoint que salva um novo usuário na base de dados.
+    // Ele espera um objeto UserPostRequestDto vindo no corpo da requisição (JSON) e retorna um UserGetResponseDto.
     public ResponseEntity<UserGetResponseDto> save(@RequestBody @Valid UserPostRequestDto userPostRequestDto) {
+
+        // Converte o DTO de entrada (UserPostRequestDto) em uma entidade User usando uma ferramenta de mapeamento (como ModelMapper).
         User user = objectMapperUtil.map(userPostRequestDto, User.class);
+
+        // Salva a entidade User no banco de dados através do service.
         User savedUser = userService.save(user);
 
+        // Converte o usuário salvo (entidade) em um DTO de resposta (UserGetResponseDto), que será retornado ao cliente.
         UserGetResponseDto responseDto = objectMapperUtil.map(savedUser, UserGetResponseDto.class);
+
+        // Retorna a resposta HTTP com o status 201 (CREATED) e o corpo contendo o DTO de resposta.
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 

@@ -7,9 +7,11 @@ import br.com.davi.PPWebBack.usuario.exception.UserAlreadyExistsException;
 import br.com.davi.PPWebBack.usuario.repository.UserIRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,8 @@ import java.util.Optional;
 @Service
 public class UserService implements UserIService {
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private final UserIRepository userIRepository;
 
@@ -27,12 +31,13 @@ public class UserService implements UserIService {
                 .orElseThrow(() -> new EntityNotFoundException("Usuário " + id + " não existe"));
     }
 
+
     @Override
     @Transactional
     public User save(User user) {
         log.info("Salvando usuário com login: {}", user.getLogin());
-        Optional <User> userOptionalLogin = userIRepository.findByLogin(user.getLogin());
-        Optional <User> userOptionalEmail = userIRepository.findByEmail(user.getEmail());
+        Optional<User> userOptionalLogin = userIRepository.findByLogin(user.getLogin());
+        Optional<User> userOptionalEmail = userIRepository.findByEmail(user.getEmail());
 
         if (userOptionalLogin.isPresent()) {
             throw new UserAlreadyExistsException("Login já cadastrado");
@@ -40,6 +45,7 @@ public class UserService implements UserIService {
         if (userOptionalEmail.isPresent()) {
             throw new UserAlreadyExistsException("Email já cadastrado");
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));  // <--- Aqui criptografa
         return this.userIRepository.save(user);
     }
 
