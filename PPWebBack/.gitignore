@@ -3,9 +3,9 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-/src/main/resources/application.properties
-/src/main/resources/application-test.properties
-/src/main/resources/application-postgres.properties
+PPWebBack/src/main/resources/application.properties
+PPWebBack/src/main/resources/application-test.properties
+PPWebBack/src/main/resources/application-postgres.properties
 
 
 ### STS ###
